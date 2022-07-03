@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,7 +30,7 @@ func getAlbums(c *gin.Context) {
 // postAlbums adds an album from JSON received in the request body.
 func postAlbums(c *gin.Context) {
 	var newAlbum album
-
+	newAlbum.ID = strconv.Itoa((len(albums) + 1))
 	// Call BindJSON to bind the received JSON to
 	// newAlbum.
 	if err := c.BindJSON(&newAlbum); err != nil {
@@ -64,11 +65,11 @@ func deleteAlbumByID(c *gin.Context) {
 	for index, album := range albums {
 		if album.ID == id {
 			albums = append(albums[:index], albums[index+1:]...)
-			c.IndentedJSON(http.StatusOK,gin.H{"message":"Album delted successfully"})
+			c.IndentedJSON(http.StatusOK, gin.H{"message": "Album delted successfully"})
 			return
 		}
 	}
-	c.IndentedJSON(http.StatusNotFound,gin.H{"message":"Album ID not found"})
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Album ID not found"})
 }
 
 func main() {
@@ -76,6 +77,6 @@ func main() {
 	router.GET("/albums", getAlbums)
 	router.GET("/albums/:id", getAlbumByID)
 	router.POST("/albums", postAlbums)
-	router.DELETE("/albums/:id",deleteAlbumByID)
+	router.DELETE("/albums/:id", deleteAlbumByID)
 	router.Run("localhost:8080")
 }
